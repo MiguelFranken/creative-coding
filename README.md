@@ -1,13 +1,6 @@
-# OPENRNDR template project
+# OPENRNDR Creative Coding Studies
 
-A feature rich template for creating OPENRNDR programs based on Gradle/Kts
-
-The template consists of a configuration for Gradle and an example OPENRNDR program. The Gradle configuration should serve as the
-go-to starting point for writing OPENRNDR-based software.
-
-If you are looking at this from IntelliJ IDEA you can start by expanding the _project_ tab on the left. You will find a template program in `src/main/kotlin/TemplateProgram.kt`
-
-You will find some [basic instructions](https://guide.openrndr.org/setUpYourFirstProgram.html) in the [OPENRNDR guide](https://guide.openrndr.org)
+All graphics presented here were created using the open-source [OPENRNDR](https://openrndr.org/) framework (a creative coding framework written in Kotlin that simplifies the writing of real-time interactive software).
 
 ## Gradle tasks
  - `run` runs the TemplateProgram
