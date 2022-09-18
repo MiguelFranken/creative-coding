@@ -1,10 +1,8 @@
 package animation
 
-import helper.flatMapGrid
 import org.openrndr.WindowMultisample
 import org.openrndr.animatable.Animatable
 import org.openrndr.animatable.easing.Easing
-import org.openrndr.animatable.easing.QuartInOut
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
 import org.openrndr.extra.shapes.grid
@@ -57,28 +55,34 @@ fun main() = application {
             }
         }
 
-        val margin = 100.0
-        val radius = drawer.bounds.center.y - margin
-        val circle = Circle(drawer.bounds.center, radius)
+        val margin = 10.0
 
-        val circles = drawer.bounds.offsetEdges(-margin).grid(50, 50).let {
-            val gridCenter = drawer.bounds.center
-            val firstCell = it.first().first()
-            val maxDistance = firstCell.center.distanceTo(gridCenter)
+        val circleGroups = drawer.bounds.offsetEdges(-margin).grid(2, 1).flatten().map { bounds ->
+            val radius = (bounds.center.y - margin - bounds.corner.y).coerceAtMost(bounds.center.x - margin - bounds.corner.x)
+            val circle = Circle(bounds.center, radius)
 
-            it.flatten().filter { cell ->
-                circle.contains(cell.center)
-            }.map { cell ->
-                val distanceRelative = cell.center.distanceTo(gridCenter) / maxDistance
-                val delay = (distanceRelative * 5000.0).toLong()
-                GridCircle(cell.center, delay)
+            bounds.offsetEdges(-margin).grid(50, 50).let {
+                val gridCenter = bounds.center
+                val firstCell = it.first().first()
+                val maxDistance = firstCell.center.distanceTo(gridCenter)
+
+                it.flatten().filter { cell ->
+                    circle.contains(cell.center)
+                }.map { cell ->
+                    val distanceRelative = cell.center.distanceTo(gridCenter) / maxDistance
+                    val delay = (distanceRelative * 5000.0).toLong()
+                    GridCircle(cell.center, delay)
+                }
             }
         }
 
         extend {
             drawer.clear(ColorRGBa.WHITE)
-            circles.forEach {
-                it.display()
+
+            circleGroups.forEach { group ->
+                group.forEach { circle ->
+                    circle.display()
+                }
             }
         }
     }
