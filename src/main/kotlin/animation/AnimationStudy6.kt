@@ -6,6 +6,7 @@ import org.openrndr.animatable.easing.Easing
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
 import org.openrndr.color.rgb
+import org.openrndr.extra.noise.scatter
 import org.openrndr.extra.shapes.grid
 import org.openrndr.math.Vector2
 import org.openrndr.shape.Circle
@@ -19,17 +20,19 @@ fun main() = application {
     }
 
     program {
-        class ScatterAnimation(shape: Shape, val margin: Double) {
+        class ScatterAnimation(val shape: Shape, val margin: Double) {
             val bounds = shape.bounds
             val radius = (bounds.center.y - margin - bounds.corner.y).coerceAtMost(bounds.center.x - margin - bounds.corner.x)
             val circle = Circle(bounds.center, radius)
+
+            val positions: List<Vector2> = shape.scatter(5.0).filter { circle.contains(it) }
 
             // animation settings
             val duration = 3000
             val srcSize = 0.0
             val targetSize = 1.5
 
-            inner class GridCircle(val position: Vector2, delay: Long) {
+            inner class ScatterCircle(val position: Vector2, delay: Long) {
                 val animation = object : Animatable() {
                     var size = srcSize
                     var initalized = false
@@ -71,19 +74,14 @@ fun main() = application {
                 }
             }
 
-            fun getCircles(): List<GridCircle> {
-                return bounds.offsetEdges(-margin).grid(50, 50).let {
-                    val gridCenter = bounds.center
-                    val firstCell = it.first().first()
-                    val maxDistance = firstCell.center.distanceTo(gridCenter)
+            fun getCircles(): List<ScatterCircle> {
+                val gridCenter = bounds.center
+                val maxDistance = bounds.corner.distanceTo(gridCenter)
 
-                    it.flatten().filter { cell ->
-                        circle.contains(cell.center)
-                    }.map { cell ->
-                        val distanceRelative = cell.center.distanceTo(gridCenter) / maxDistance
-                        val delay = (distanceRelative * 5000.0).toLong()
-                        GridCircle(cell.center, delay)
-                    }
+                return positions.map { position ->
+                    val distanceRelative = position.distanceTo(gridCenter) / maxDistance
+                    val delay = (distanceRelative * 5000.0).toLong()
+                    ScatterCircle(position, delay)
                 }
             }
         }
@@ -100,9 +98,7 @@ fun main() = application {
 
         extend {
             drawer.clear(ColorRGBa.WHITE)
-            circles.forEach {
-                it.display()
-            }
+            circles.forEach(ScatterAnimation.ScatterCircle::display)
         }
     }
 }
