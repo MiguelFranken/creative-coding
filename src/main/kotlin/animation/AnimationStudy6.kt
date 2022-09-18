@@ -9,6 +9,7 @@ import org.openrndr.application
 import org.openrndr.color.ColorRGBa
 import org.openrndr.extra.shapes.grid
 import org.openrndr.math.Vector2
+import org.openrndr.shape.Circle
 
 fun main() = application {
     configure {
@@ -20,8 +21,8 @@ fun main() = application {
     program {
         class GridCircle(val position: Vector2, delay: Long) {
             val duration = 3000
-            val srcSize = 1.0
-            val targetSize = 5.0
+            val srcSize = 0.0
+            val targetSize = 1.5
 
             val animation = object : Animatable() {
                 var size = srcSize
@@ -36,7 +37,7 @@ fun main() = application {
                         initalized = true
                     }
                     ::size.complete()
-                    ::size.animate(srcSize, (duration / 2.0).toLong(), Easing.QuartInOut)
+                    ::size.animate(srcSize, (duration / 2.0).toLong(), Easing.QuadInOut)
                 }
 
                 fun update() {
@@ -56,12 +57,18 @@ fun main() = application {
             }
         }
 
-        val circles = drawer.bounds.offsetEdges(-20.0).grid(25, 25).let {
+        val margin = 100.0
+        val radius = drawer.bounds.center.y - margin
+        val circle = Circle(drawer.bounds.center, radius)
+
+        val circles = drawer.bounds.offsetEdges(-margin).grid(50, 50).let {
             val gridCenter = drawer.bounds.center
             val firstCell = it.first().first()
             val maxDistance = firstCell.center.distanceTo(gridCenter)
 
-            it.flatMapGrid { _, cell ->
+            it.flatten().filter { cell ->
+                circle.contains(cell.center)
+            }.map { cell ->
                 val distanceRelative = cell.center.distanceTo(gridCenter) / maxDistance
                 val delay = (distanceRelative * 5000.0).toLong()
                 GridCircle(cell.center, delay)
