@@ -90,15 +90,13 @@ fun main() = application {
 
         val margin = 10.0
 
-        val circleGroups = drawer.bounds.offsetEdges(-margin).grid(1, 1).flatten().map { bounds ->
-            val radius = (bounds.center.y - margin - bounds.corner.y).coerceAtMost(bounds.center.x - margin - bounds.corner.x)
-            val circle = Circle(bounds.center, radius)
-
-            val scatter = ScatterAnimation(circle.shape, margin)
-            scatter.getCircles()
+        val scatterAnimations = drawer.bounds.offsetEdges(-margin).grid(1, 1).flatten().map { bounds ->
+            val radius = (bounds.center.y - bounds.corner.y).coerceAtMost(bounds.center.x - bounds.corner.x) - margin
+            val circle = Circle(bounds.center, radius).shape
+            ScatterAnimation(circle, margin)
         }
 
-        val circles = circleGroups.flatten()
+        val circles = scatterAnimations.map(ScatterAnimation::getCircles).flatten()
 
         extend {
             drawer.clear(ColorRGBa.WHITE)
