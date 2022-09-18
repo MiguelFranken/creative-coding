@@ -5,6 +5,7 @@ import org.openrndr.animatable.Animatable
 import org.openrndr.animatable.easing.Easing
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
+import org.openrndr.color.rgb
 import org.openrndr.extra.shapes.grid
 import org.openrndr.math.Vector2
 import org.openrndr.shape.Circle
@@ -20,15 +21,15 @@ fun main() = application {
     program {
         class ScatterAnimation(shape: Shape, val margin: Double) {
             val bounds = shape.bounds
-            val center = shape.bounds.center
             val radius = (bounds.center.y - margin - bounds.corner.y).coerceAtMost(bounds.center.x - margin - bounds.corner.x)
             val circle = Circle(bounds.center, radius)
 
-            inner class GridCircle(val position: Vector2, delay: Long) {
-                val duration = 3000
-                val srcSize = 0.0
-                val targetSize = 1.5
+            // animation settings
+            val duration = 3000
+            val srcSize = 0.0
+            val targetSize = 1.5
 
+            inner class GridCircle(val position: Vector2, delay: Long) {
                 val animation = object : Animatable() {
                     var size = srcSize
                     var initalized = false
@@ -38,11 +39,14 @@ fun main() = application {
                             delay(delay)
                         }
 
-                        ::size.animate(targetSize, (duration / 2.0).toLong(), Easing.QuartIn).completed.listen {
+                        ::size.animate(targetSize, (duration / 3.0).toLong(), Easing.QuartIn).completed.listen {
                             initalized = true
                         }
                         ::size.complete()
-                        ::size.animate(srcSize, (duration / 2.0).toLong(), Easing.QuadInOut)
+                        ::size.animate(0.0, (duration / 3.0).toLong(), Easing.QuartOut)
+                        ::size.complete()
+                        ::size.animate(0.0, (duration / 3.0).toLong())
+                        ::size.complete()
                     }
 
                     fun update() {
@@ -58,7 +62,12 @@ fun main() = application {
                 fun display() {
                     animation.update()
                     drawer.fill = ColorRGBa.BLACK
-                    drawer.circle(position, animation.size)
+                    drawer.stroke = null
+                    val size = if (animation.size < 0.1) 0.0 else animation.size
+                    if (size <= 0.5) {
+                        drawer.fill = rgb(0.0, (size - 0.1) / 0.4)
+                    }
+                    drawer.circle(position, size)
                 }
             }
 
@@ -81,7 +90,7 @@ fun main() = application {
 
         val margin = 10.0
 
-        val circleGroups = drawer.bounds.offsetEdges(-margin).grid(2, 1).flatten().map { bounds ->
+        val circleGroups = drawer.bounds.offsetEdges(-margin).grid(1, 1).flatten().map { bounds ->
             val radius = (bounds.center.y - margin - bounds.corner.y).coerceAtMost(bounds.center.x - margin - bounds.corner.x)
             val circle = Circle(bounds.center, radius)
 
