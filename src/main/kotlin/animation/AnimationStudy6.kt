@@ -8,6 +8,7 @@ import org.openrndr.color.ColorRGBa
 import org.openrndr.extra.shapes.grid
 import org.openrndr.math.Vector2
 import org.openrndr.shape.Circle
+import org.openrndr.shape.Shape
 
 fun main() = application {
     configure {
@@ -17,41 +18,64 @@ fun main() = application {
     }
 
     program {
-        class GridCircle(val position: Vector2, delay: Long) {
-            val duration = 3000
-            val srcSize = 0.0
-            val targetSize = 1.5
+        class ScatterAnimation(shape: Shape, val margin: Double) {
+            val bounds = shape.bounds
+            val center = shape.bounds.center
+            val radius = (bounds.center.y - margin - bounds.corner.y).coerceAtMost(bounds.center.x - margin - bounds.corner.x)
+            val circle = Circle(bounds.center, radius)
 
-            val animation = object : Animatable() {
-                var size = srcSize
-                var initalized = false
+            inner class GridCircle(val position: Vector2, delay: Long) {
+                val duration = 3000
+                val srcSize = 0.0
+                val targetSize = 1.5
 
-                fun animate() {
-                    if (!initalized) {
-                        delay(delay)
+                val animation = object : Animatable() {
+                    var size = srcSize
+                    var initalized = false
+
+                    fun animate() {
+                        if (!initalized) {
+                            delay(delay)
+                        }
+
+                        ::size.animate(targetSize, (duration / 2.0).toLong(), Easing.QuartIn).completed.listen {
+                            initalized = true
+                        }
+                        ::size.complete()
+                        ::size.animate(srcSize, (duration / 2.0).toLong(), Easing.QuadInOut)
                     }
 
-                    ::size.animate(targetSize, (duration / 2.0).toLong(), Easing.QuartIn).completed.listen {
-                        initalized = true
+                    fun update() {
+                        updateAnimation()
+
+                        // loop animation
+                        if (!hasAnimations()) {
+                            animate()
+                        }
                     }
-                    ::size.complete()
-                    ::size.animate(srcSize, (duration / 2.0).toLong(), Easing.QuadInOut)
                 }
 
-                fun update() {
-                    updateAnimation()
-
-                    // loop animation
-                    if (!hasAnimations()) {
-                        animate()
-                    }
+                fun display() {
+                    animation.update()
+                    drawer.fill = ColorRGBa.BLACK
+                    drawer.circle(position, animation.size)
                 }
             }
 
-            fun display() {
-                animation.update()
-                drawer.fill = ColorRGBa.BLACK
-                drawer.circle(position, animation.size)
+            fun getCircles(): List<GridCircle> {
+                return bounds.offsetEdges(-margin).grid(50, 50).let {
+                    val gridCenter = bounds.center
+                    val firstCell = it.first().first()
+                    val maxDistance = firstCell.center.distanceTo(gridCenter)
+
+                    it.flatten().filter { cell ->
+                        circle.contains(cell.center)
+                    }.map { cell ->
+                        val distanceRelative = cell.center.distanceTo(gridCenter) / maxDistance
+                        val delay = (distanceRelative * 5000.0).toLong()
+                        GridCircle(cell.center, delay)
+                    }
+                }
             }
         }
 
@@ -61,28 +85,16 @@ fun main() = application {
             val radius = (bounds.center.y - margin - bounds.corner.y).coerceAtMost(bounds.center.x - margin - bounds.corner.x)
             val circle = Circle(bounds.center, radius)
 
-            bounds.offsetEdges(-margin).grid(50, 50).let {
-                val gridCenter = bounds.center
-                val firstCell = it.first().first()
-                val maxDistance = firstCell.center.distanceTo(gridCenter)
-
-                it.flatten().filter { cell ->
-                    circle.contains(cell.center)
-                }.map { cell ->
-                    val distanceRelative = cell.center.distanceTo(gridCenter) / maxDistance
-                    val delay = (distanceRelative * 5000.0).toLong()
-                    GridCircle(cell.center, delay)
-                }
-            }
+            val scatter = ScatterAnimation(circle.shape, margin)
+            scatter.getCircles()
         }
+
+        val circles = circleGroups.flatten()
 
         extend {
             drawer.clear(ColorRGBa.WHITE)
-
-            circleGroups.forEach { group ->
-                group.forEach { circle ->
-                    circle.display()
-                }
+            circles.forEach {
+                it.display()
             }
         }
     }
