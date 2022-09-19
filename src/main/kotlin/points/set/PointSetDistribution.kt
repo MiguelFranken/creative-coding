@@ -1,5 +1,6 @@
 package points.set
 
+import noise.haltonLDS
 import noise.phyllotaxis
 import noise.plasticLDS
 import org.openrndr.extra.gui.GUI
@@ -57,9 +58,18 @@ data class PlasticLDSPointSetConfiguration(
     override fun ShapeProvider.generatePoints() = plasticLDS(n)
 }
 
+@Description("Halton LDS Set")
+data class HaltonLDSPointSetConfiguration(
+    @IntParameter("Number Points", 100, 4000)
+    var n: Int = 1000
+): PointSetConfiguration {
+    override fun ShapeProvider.generatePoints() = haltonLDS(n)
+}
+
 enum class Distribution(val configuration: PointSetConfiguration) {
     POISSON(PoissonPointSetConfiguration()),
     PLASTIC_LDS(PlasticLDSPointSetConfiguration()),
+    HALTON_LDS(HaltonLDSPointSetConfiguration()),
     PHYLLOTAXIS(PhyllotaxisPointSetConfiguration());
 
     companion object {
