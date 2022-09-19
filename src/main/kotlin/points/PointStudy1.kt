@@ -1,5 +1,6 @@
 package points
 
+import noise.phyllotaxis
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
 import org.openrndr.color.rgb
@@ -8,9 +9,11 @@ import org.openrndr.math.Vector2
 import org.openrndr.shape.Rectangle
 
 enum class Distribution {
-    RANDOM_1,
-    RANDOM_2,
-    RANDOM_WITH_OBSTACLE,
+    POISSON_1,
+    POISSON_2,
+    POISSON_WITH_OBSTACLE,
+    PHYLLOTAXIS_1,
+    PHYLLOTAXIS_2,
 }
 
 fun main() = application {
@@ -26,9 +29,11 @@ fun main() = application {
 
         fun getPointSet(distribution: Distribution): List<Vector2> {
             return when(distribution) {
-                Distribution.RANDOM_1 -> rect.scatter(5.0)
-                Distribution.RANDOM_2 -> rect.scatter(10.0)
-                Distribution.RANDOM_WITH_OBSTACLE -> rect.scatter(3.0, obstacles = obstacles)
+                Distribution.POISSON_1 -> rect.scatter(5.0)
+                Distribution.POISSON_2 -> rect.scatter(10.0)
+                Distribution.POISSON_WITH_OBSTACLE -> rect.scatter(3.0, obstacles = obstacles)
+                Distribution.PHYLLOTAXIS_1 -> rect.phyllotaxis(1000)
+                Distribution.PHYLLOTAXIS_2 -> rect.phyllotaxis(2000)
             }
         }
 
