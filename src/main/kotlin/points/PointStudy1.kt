@@ -15,12 +15,7 @@ fun main() = application {
             var radius = 1.0
         }
 
-//        val rectWidth = 300.0
-//        val rectHeight = 300.0
-//        val rect = Rectangle(-rectWidth / 2.0, -rectHeight / 2.0, rectWidth, rectHeight)
-//        val pointSetCollection = PointSetCollection(rect).addTo(gui)
         val pointSetCollection = PointSetCollection().addTo(gui)
-//        pointSetCollection.pointSetShape.shapeProvider.center = drawer.bounds.center
 
         extend(gui) {
             add(settings)
@@ -31,10 +26,7 @@ fun main() = application {
             drawer.clear(ColorRGBa.WHITE)
             drawer.translate(width / 2.0, height / 2.0)
 
-//            drawer.fill = null
-//            drawer.stroke = rgb(0.8)
-//            drawer.translate(width / 2.0, height / 2.0)
-//            drawer.rectangle(rect)
+            pointSetCollection.displayShape(drawer)
 
             drawer.fill = ColorRGBa.BLACK
             drawer.stroke = null

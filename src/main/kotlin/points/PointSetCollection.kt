@@ -1,5 +1,7 @@
 package points
 
+import org.openrndr.color.rgb
+import org.openrndr.draw.Drawer
 import org.openrndr.extra.gui.GUI
 import org.openrndr.extra.gui.addTo
 import org.openrndr.extra.parameters.Description
@@ -13,6 +15,8 @@ import org.openrndr.shape.ShapeProvider
 
 interface IPointSetShape : ShapeProvider {
     var center: Vector2
+
+    fun display(drawer: Drawer)
 }
 
 @Description("Rectangle Shape")
@@ -28,11 +32,21 @@ data class PointSetRect(
 ) : IPointSetShape {
     private val rect get() = Rectangle(center - Vector2(width / 2.0, height / 2.0), width, height)
 
+    override fun display(drawer: Drawer) {
+        drawer.fill = null
+        drawer.stroke = rgb(0.8)
+        drawer.rectangle(rect)
+    }
+
     override val shape: Shape get() = rect.shape
 }
 
 enum class PointSetShape(val shapeProvider: IPointSetShape) {
     RECT(PointSetRect());
+
+    fun display(drawer: Drawer) {
+        shapeProvider.display(drawer)
+    }
 
     companion object {
         fun addTo(gui: GUI) {
@@ -56,6 +70,10 @@ class PointSetCollection() {
         Distribution.addTo(gui)
         PointSetShape.addTo(gui)
         return this
+    }
+
+    fun displayShape(drawer: Drawer) {
+        pointSetShape.display(drawer)
     }
 
     @OptionParameter("Distribution")
