@@ -4,7 +4,11 @@ import noise.phyllotaxis
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
 import org.openrndr.color.rgb
+import org.openrndr.extra.gui.GUI
 import org.openrndr.extra.noise.scatter
+import org.openrndr.extra.parameters.Description
+import org.openrndr.extra.parameters.DoubleParameter
+import org.openrndr.extra.parameters.OptionParameter
 import org.openrndr.math.Vector2
 import org.openrndr.shape.Rectangle
 
@@ -37,11 +41,23 @@ fun main() = application {
             }
         }
 
-        var i = 0
         var points: List<Vector2> = getPointSet(Distribution.values().first())
-        mouse.buttonUp.listen {
-            val distribution = Distribution.values()[++i % Distribution.values().size]
-             points = getPointSet(distribution)
+
+        val settings = @Description("General") object {
+            @DoubleParameter("Circle Radius", 0.1, 4.0)
+            var radius = 1.0
+
+            @OptionParameter("Distribution")
+            @Suppress("unused")
+            var option = Distribution.PHYLLOTAXIS_1
+                set(value) {
+                    field = value
+                    points = getPointSet(value)
+                }
+        }
+
+        extend(GUI()) {
+            add(settings)
         }
 
         extend {
@@ -52,11 +68,9 @@ fun main() = application {
             drawer.translate(width / 2.0, height / 2.0)
             drawer.rectangle(rect)
 
-            points.forEach {
-                drawer.fill = ColorRGBa.BLACK
-                drawer.stroke = null
-                drawer.circle(it, 1.0)
-            }
+            drawer.fill = ColorRGBa.BLACK
+            drawer.stroke = null
+            drawer.circles(points, settings.radius)
         }
     }
 }
