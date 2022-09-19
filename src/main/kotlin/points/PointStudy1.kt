@@ -10,9 +10,12 @@ fun main() = application {
     program {
         val gui = GUI()
 
-        val settings = @Description("General") object {
+        val settings = @Description("Circles") object {
             @DoubleParameter("Circle Radius", 2.0, 4.0)
             var radius = 1.0
+
+            @BooleanParameter("Filled Circle")
+            var filled = true
         }
 
         val pointSetCollection = PointSetCollection().addTo(gui)
@@ -29,7 +32,8 @@ fun main() = application {
             pointSetCollection.displayShape(drawer)
 
             drawer.fill = ColorRGBa.BLACK
-            drawer.stroke = null
+            drawer.fill = if (settings.filled) ColorRGBa.BLACK else null
+            drawer.stroke = if (settings.filled) null else ColorRGBa.BLACK
             drawer.circles(pointSetCollection.points, settings.radius)
         }
     }
