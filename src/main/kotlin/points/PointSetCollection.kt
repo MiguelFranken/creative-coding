@@ -69,6 +69,7 @@ class PointSetCollection() {
     fun addTo(gui: GUI): PointSetCollection {
         Distribution.addTo(gui)
         PointSetShape.addTo(gui)
+        gui.add(this)
         return this
     }
 
