@@ -20,12 +20,11 @@ fun main() = application {
     }
 
     program {
-        class ScatterAnimation(val shape: Shape, val margin: Double) {
+        class ScatterAnimation(shape: Shape, margin: Double, generatePoints: Shape.() -> List<Vector2>) {
             val bounds = shape.bounds
             val radius = (bounds.center.y - margin - bounds.corner.y).coerceAtMost(bounds.center.x - margin - bounds.corner.x)
             val circle = Circle(bounds.center, radius)
-
-            val positions: List<Vector2> = shape.scatter(5.0).filter { circle.contains(it) }
+            val positions: List<Vector2> = shape.generatePoints().filter { circle.contains(it) }
 
             // animation settings
             val duration = 3000
@@ -91,7 +90,9 @@ fun main() = application {
         val scatterAnimations = drawer.bounds.offsetEdges(-margin).grid(1, 1).flatten().map { bounds ->
             val radius = (bounds.center.y - bounds.corner.y).coerceAtMost(bounds.center.x - bounds.corner.x) - margin
             val circle = Circle(bounds.center, radius).shape
-            ScatterAnimation(circle, margin)
+            ScatterAnimation(circle, margin) {
+                shape.scatter(5.0)
+            }
         }
 
         val circles = scatterAnimations.map(ScatterAnimation::getCircles).flatten()
