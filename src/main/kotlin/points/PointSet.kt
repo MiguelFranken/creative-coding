@@ -29,10 +29,13 @@ data class PoissonPointSetConfiguration(
     @DoubleParameter("Placement Radius", 2.0, 10.0)
     var placementRadius: Double = 5.0,
 
+    @DoubleParameter("Distance To Edge", 0.0, 50.0)
+    var distanceToEdge: Double = 0.0,
+
     @BooleanParameter("Use Obstacles")
     override var useObstacles: Boolean = true
 ): PointSetConfiguration, PointSetConfigurationWithObstacle {
-    override fun ShapeProvider.generatePoints() = scatter(placementRadius, obstacles = obstacles)
+    override fun ShapeProvider.generatePoints() = scatter(placementRadius, distanceToEdge = distanceToEdge, obstacles = obstacles)
 }
 
 @Description("Phyllotaxis Point Set")
