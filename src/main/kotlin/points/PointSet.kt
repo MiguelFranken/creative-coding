@@ -1,6 +1,8 @@
 package points
 
 import noise.phyllotaxis
+import org.openrndr.extra.gui.GUI
+import org.openrndr.extra.gui.addTo
 import org.openrndr.extra.noise.scatter
 import org.openrndr.extra.parameters.BooleanParameter
 import org.openrndr.extra.parameters.Description
@@ -33,7 +35,7 @@ data class PoissonPointSetConfiguration(
     var distanceToEdge: Double = 0.0,
 
     @BooleanParameter("Use Obstacles")
-    override var useObstacles: Boolean = true
+    override var useObstacles: Boolean = false
 ): PointSetConfiguration, PointSetConfigurationWithObstacle {
     override fun ShapeProvider.generatePoints() = scatter(placementRadius, distanceToEdge = distanceToEdge, obstacles = obstacles)
 }
@@ -48,5 +50,13 @@ data class PhyllotaxisPointSetConfiguration(
 
 enum class Distribution(val configuration: PointSetConfiguration) {
     POISSON(PoissonPointSetConfiguration()),
-    PHYLLOTAXIS(PhyllotaxisPointSetConfiguration()),
+    PHYLLOTAXIS(PhyllotaxisPointSetConfiguration());
+
+    companion object {
+        fun addTo(gui: GUI) {
+            values().map(Distribution::configuration).forEach {
+                it.addTo(gui)
+            }
+        }
+    }
 }

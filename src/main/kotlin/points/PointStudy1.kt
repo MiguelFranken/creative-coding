@@ -2,10 +2,8 @@ package points
 
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
-import org.openrndr.color.rgb
 import org.openrndr.extra.gui.GUI
 import org.openrndr.extra.parameters.*
-import org.openrndr.shape.Rectangle
 
 
 fun main() = application {
@@ -17,10 +15,12 @@ fun main() = application {
             var radius = 1.0
         }
 
-        val rectWidth = 300.0
-        val rectHeight = 300.0
-        val rect = Rectangle(-rectWidth / 2.0, -rectHeight / 2.0, rectWidth, rectHeight)
-        val pointSetCollection = PointSetCollection(rect).addTo(gui)
+//        val rectWidth = 300.0
+//        val rectHeight = 300.0
+//        val rect = Rectangle(-rectWidth / 2.0, -rectHeight / 2.0, rectWidth, rectHeight)
+//        val pointSetCollection = PointSetCollection(rect).addTo(gui)
+        val pointSetCollection = PointSetCollection().addTo(gui)
+//        pointSetCollection.pointSetShape.shapeProvider.center = drawer.bounds.center
 
         extend(gui) {
             add(settings)
@@ -29,11 +29,12 @@ fun main() = application {
 
         extend {
             drawer.clear(ColorRGBa.WHITE)
-
-            drawer.fill = null
-            drawer.stroke = rgb(0.8)
             drawer.translate(width / 2.0, height / 2.0)
-            drawer.rectangle(rect)
+
+//            drawer.fill = null
+//            drawer.stroke = rgb(0.8)
+//            drawer.translate(width / 2.0, height / 2.0)
+//            drawer.rectangle(rect)
 
             drawer.fill = ColorRGBa.BLACK
             drawer.stroke = null
