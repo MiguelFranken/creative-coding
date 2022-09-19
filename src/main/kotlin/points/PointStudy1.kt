@@ -29,7 +29,6 @@ fun main() = application {
 
             pointSetCollection.displayShape(drawer)
 
-            drawer.fill = ColorRGBa.BLACK
             drawer.fill = if (circle.filled) ColorRGBa.BLACK else null
             drawer.stroke = if (circle.filled) null else ColorRGBa.BLACK
             drawer.circles(pointSetCollection.points, circle.radius)

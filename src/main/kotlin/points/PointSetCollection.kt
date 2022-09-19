@@ -9,6 +9,7 @@ import org.openrndr.extra.parameters.DoubleParameter
 import org.openrndr.extra.parameters.OptionParameter
 import org.openrndr.extra.parameters.Vector2Parameter
 import org.openrndr.math.Vector2
+import org.openrndr.shape.Circle
 import org.openrndr.shape.Rectangle
 import org.openrndr.shape.Shape
 import org.openrndr.shape.ShapeProvider
@@ -24,11 +25,11 @@ data class PointSetRect(
     @Vector2Parameter("Center Coordinates", 0.0, 200.0)
     override var center: Vector2 = Vector2.ZERO,
 
-    @DoubleParameter("Width", 0.1, 200.0)
-    var width: Double = 100.0,
+    @DoubleParameter("Width", 0.1, 400.0)
+    var width: Double = 200.0,
 
-    @DoubleParameter("Height", 0.1, 200.0)
-    var height: Double = 100.0
+    @DoubleParameter("Height", 0.1, 400.0)
+    var height: Double = 200.0
 ) : IPointSetShape {
     private val rect get() = Rectangle(center - Vector2(width / 2.0, height / 2.0), width, height)
 
@@ -41,8 +42,28 @@ data class PointSetRect(
     override val shape: Shape get() = rect.shape
 }
 
+@Description("Circle Shape")
+data class PointSetCircle(
+    @Vector2Parameter("Center Coordinates", 0.0, 200.0)
+    override var center: Vector2 = Vector2.ZERO,
+
+    @DoubleParameter("Width", 0.1, 400.0)
+    var radius: Double = 100.0,
+) : IPointSetShape {
+    private val circle get() = Circle(center, radius)
+
+    override fun display(drawer: Drawer) {
+        drawer.fill = null
+        drawer.stroke = rgb(0.8)
+        drawer.circle(circle)
+    }
+
+    override val shape: Shape get() = circle.shape
+}
+
 enum class PointSetShape(val shapeProvider: IPointSetShape) {
-    RECT(PointSetRect());
+    RECT(PointSetRect()),
+    CIRCLE(PointSetCircle());
 
     fun display(drawer: Drawer) {
         shapeProvider.display(drawer)
@@ -73,6 +94,7 @@ class PointSetCollection() {
         return this
     }
 
+//    @Suppress("unused")
     fun displayShape(drawer: Drawer) {
         pointSetShape.display(drawer)
     }
