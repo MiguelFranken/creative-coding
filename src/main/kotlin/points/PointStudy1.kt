@@ -16,9 +16,25 @@ interface PointSetConfiguration {
     fun ShapeProvider.generatePoints(): List<Vector2>
 }
 
-enum class Distribution {
-    POISSON,
-    PHYLLOTAXIS,
+@Description("Poisson Point Set")
+data class PoissonPointSetConfiguration(
+    @DoubleParameter("Placement Radius", 2.0, 10.0)
+    var placementRadius: Double = 5.0
+): PointSetConfiguration {
+    override fun ShapeProvider.generatePoints() = scatter(placementRadius)
+}
+
+@Description("Phyllotaxis Point Set")
+data class PhyllotaxisPointSetConfiguration(
+    @IntParameter("Number Points", 100, 4000)
+    var n: Int = 1000
+): PointSetConfiguration {
+    override fun ShapeProvider.generatePoints() = phyllotaxis(n)
+}
+
+enum class Distribution(val configuration: PointSetConfiguration) {
+    POISSON(PoissonPointSetConfiguration()),
+    PHYLLOTAXIS(PhyllotaxisPointSetConfiguration()),
 }
 
 fun main() = application {
@@ -30,45 +46,23 @@ fun main() = application {
             var radius = 1.0
         }
 
-        @Description("Poisson Point Set")
-        data class PoissonPointSetConfiguration(
-            @DoubleParameter("Placement Radius", 0.1, 10.0)
-            var placementRadius: Double = 5.0
-        ): PointSetConfiguration {
-            override fun ShapeProvider.generatePoints() = scatter(placementRadius)
-        }
-
-        @Description("Phyllotaxis Point Set")
-        data class PhyllotaxisPointSetConfiguration(
-            @IntParameter("Number Points", 100, 4000)
-            var n: Int = 1000
-        ): PointSetConfiguration {
-            override fun ShapeProvider.generatePoints() = phyllotaxis(n)
-        }
-
         @Description("Point Set")
         class PointSetCollection(val shapeProvider: ShapeProvider) {
             private val sets = mutableMapOf<Int, List<Vector2>>()
 
-            private val obstacles = listOf(
-                Pair(20.0, listOf(Vector2(-40.0, -40.0), Vector2(40.0, -40.0))),
-                Pair(40.0, listOf(Vector2(-60.0, 80.0), Vector2(60.0, 80.0)))
-            )
+//            private val obstacles = listOf(
+//                Pair(20.0, listOf(Vector2(-40.0, -40.0), Vector2(40.0, -40.0))),
+//                Pair(40.0, listOf(Vector2(-60.0, 80.0), Vector2(60.0, 80.0)))
+//            )
 
-            var configurations: Map<Distribution, PointSetConfiguration> = mapOf(
-                Pair(Distribution.POISSON, PoissonPointSetConfiguration()),
-                Pair(Distribution.PHYLLOTAXIS, PhyllotaxisPointSetConfiguration())
-            ).also {
-                it.values.forEach { config ->
-                    println("Add config $config")
-                    config.addTo(gui)
-                }
+            init {
+                Distribution.values().forEach { it.configuration.addTo(gui) }
             }
 
             @OptionParameter("Distribution")
             var activeDistribution = Distribution.POISSON
 
-            val activeConfiguration get() = configurations[activeDistribution]!!
+            val activeConfiguration get() = activeDistribution.configuration
 
             val points: List<Vector2>
                 get() = sets.getOrPut(activeConfiguration.hashCode()) {
