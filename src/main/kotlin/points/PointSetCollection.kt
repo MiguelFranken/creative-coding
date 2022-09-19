@@ -24,10 +24,13 @@ class PointSetCollection() {
         return this
     }
 
-//    @Suppress("unused")
+    @Suppress("unused")
     fun displayShape(drawer: Drawer) {
         pointSetShape.display(drawer)
     }
+
+    @Suppress("unused")
+    val shape get() = pointSetShape.shapeProvider.shape
 
     @OptionParameter("Distribution")
     var activeDistribution = Distribution.POISSON

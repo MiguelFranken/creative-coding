@@ -1,5 +1,6 @@
 package points
 
+import org.openrndr.color.ColorRGBa
 import org.openrndr.color.rgb
 import org.openrndr.draw.Drawer
 import org.openrndr.extra.gui.GUI
@@ -139,7 +140,7 @@ data class PointSetCorner(
 
     override fun display(drawer: Drawer) {
         drawer.fill = null
-        drawer.stroke = rgb(0.8)
+        drawer.stroke = ColorRGBa.BLACK
         drawer.shape(shape)
     }
 }
