@@ -9,6 +9,8 @@ import org.openrndr.extra.parameters.DoubleParameter
 import org.openrndr.extra.parameters.Vector2Parameter
 import org.openrndr.math.Matrix44
 import org.openrndr.math.Vector2
+import org.openrndr.math.transforms.rotateZ
+import org.openrndr.math.transforms.translate
 import org.openrndr.shape.*
 
 interface IPointSetShape : ShapeProvider {
@@ -96,6 +98,52 @@ data class PointSetRectWithHole(
     }
 }
 
+@Description("Corner Shape")
+data class PointSetCorner(
+    @DoubleParameter("Corner Coordinates", 0.0, 200.0)
+    var cornerOffset: Double = 0.0,
+
+    // TODO MF: Remove this
+    @Vector2Parameter("Center Coordinates", 0.0, 200.0)
+    override var center: Vector2 = Vector2.ZERO,
+
+    @DoubleParameter("Width", 0.1, 400.0)
+    var size: Double = 200.0,
+) : IPointSetShape {
+    private fun Shape.rotate(rotationInDegrees: Double): Shape {
+        return transform(Matrix44.rotateZ(rotationInDegrees))
+    }
+
+    private val corner get() = Vector2(-cornerOffset)
+
+    private fun computeCorner(): Shape = shape {
+        contour {
+            moveTo(corner)
+            lineTo(corner.x + size, corner.y)
+            lineTo(corner.x + size, corner.y + size/2.0)
+            lineTo(corner.x + size/2.0, corner.y + size/2.0)
+            lineTo(corner.x + size/2.0, corner.y + size)
+            lineTo(corner.x, corner.y + size)
+            close()
+        }
+    }.transform(Matrix44.translate(-size,-size,0.0))
+
+    override val shape get() = Shape.compound(
+        listOf(
+            computeCorner(),
+            computeCorner().rotate(90.0),
+            computeCorner().rotate(180.0),
+            computeCorner().rotate(270.0),
+        )
+    )
+
+    override fun display(drawer: Drawer) {
+        drawer.fill = null
+        drawer.stroke = rgb(0.8)
+        drawer.shape(shape)
+    }
+}
+
 @Description("Circle Shape")
 data class PointSetCircle(
     @Vector2Parameter("Center Coordinates", 0.0, 200.0)
@@ -118,6 +166,7 @@ data class PointSetCircle(
 enum class PointSetShape(val shapeProvider: IPointSetShape) {
     RECT(PointSetRect()),
     RECT_WITH_HOLE(PointSetRectWithHole()),
+    CORNER(PointSetCorner()),
     CIRCLE(PointSetCircle());
 
     fun display(drawer: Drawer) {
