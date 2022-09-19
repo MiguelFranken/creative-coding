@@ -1,6 +1,7 @@
 package points.set
 
 import noise.phyllotaxis
+import noise.plasticLDS
 import org.openrndr.extra.gui.GUI
 import org.openrndr.extra.gui.addTo
 import org.openrndr.extra.noise.scatter
@@ -48,8 +49,17 @@ data class PhyllotaxisPointSetConfiguration(
     override fun ShapeProvider.generatePoints() = phyllotaxis(n)
 }
 
+@Description("Plastic LDS Set")
+data class PlasticLDSPointSetConfiguration(
+    @IntParameter("Number Points", 100, 4000)
+    var n: Int = 1000
+): PointSetConfiguration {
+    override fun ShapeProvider.generatePoints() = plasticLDS(n)
+}
+
 enum class Distribution(val configuration: PointSetConfiguration) {
     POISSON(PoissonPointSetConfiguration()),
+    PLASTIC_LDS(PlasticLDSPointSetConfiguration()),
     PHYLLOTAXIS(PhyllotaxisPointSetConfiguration());
 
     companion object {

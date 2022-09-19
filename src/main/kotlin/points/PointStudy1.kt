@@ -39,6 +39,7 @@ fun main() = application {
                 layer {
                     draw {
                         drawer.fill = ColorRGBa.WHITE
+                        drawer.stroke = null
                         drawer.shape(pointSetCollection.shape)
                     }
                 }

@@ -1,7 +1,6 @@
 package points.set
 
 import org.openrndr.color.ColorRGBa
-import org.openrndr.color.rgb
 import org.openrndr.draw.Drawer
 import org.openrndr.extra.gui.GUI
 import org.openrndr.extra.gui.addTo
@@ -35,7 +34,7 @@ data class PointSetRect(
 
     override fun display(drawer: Drawer) {
         drawer.fill = null
-        drawer.stroke = rgb(0.8)
+        drawer.stroke = ColorRGBa.BLACK
         drawer.rectangle(rect)
     }
 
@@ -94,7 +93,7 @@ data class PointSetRectWithHole(
 
     override fun display(drawer: Drawer) {
         drawer.fill = null
-        drawer.stroke = rgb(0.8)
+        drawer.stroke = ColorRGBa.BLACK
         drawer.shape(shape)
     }
 }
@@ -157,7 +156,7 @@ data class PointSetCircle(
 
     override fun display(drawer: Drawer) {
         drawer.fill = null
-        drawer.stroke = rgb(0.8)
+        drawer.stroke = ColorRGBa.BLACK
         drawer.circle(circle)
     }
 
