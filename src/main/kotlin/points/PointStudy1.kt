@@ -16,12 +16,25 @@ interface PointSetConfiguration {
     fun ShapeProvider.generatePoints(): List<Vector2>
 }
 
+interface PointSetConfigurationWithObstacle {
+    var useObstacles: Boolean
+
+    val obstacles: List<Pair<Double, List<Vector2>>>
+        get() = if (useObstacles) listOf(
+            Pair(20.0, listOf(Vector2(-40.0, -40.0), Vector2(40.0, -40.0))),
+            Pair(40.0, listOf(Vector2(-60.0, 80.0), Vector2(60.0, 80.0)))
+        ) else emptyList()
+}
+
 @Description("Poisson Point Set")
 data class PoissonPointSetConfiguration(
     @DoubleParameter("Placement Radius", 2.0, 10.0)
-    var placementRadius: Double = 5.0
-): PointSetConfiguration {
-    override fun ShapeProvider.generatePoints() = scatter(placementRadius)
+    var placementRadius: Double = 5.0,
+
+    @BooleanParameter("Use Obstacles")
+    override var useObstacles: Boolean = true
+): PointSetConfiguration, PointSetConfigurationWithObstacle {
+    override fun ShapeProvider.generatePoints() = scatter(placementRadius, obstacles = obstacles)
 }
 
 @Description("Phyllotaxis Point Set")
@@ -49,11 +62,6 @@ fun main() = application {
         @Description("Point Set")
         class PointSetCollection(val shapeProvider: ShapeProvider) {
             private val sets = mutableMapOf<Int, List<Vector2>>()
-
-//            private val obstacles = listOf(
-//                Pair(20.0, listOf(Vector2(-40.0, -40.0), Vector2(40.0, -40.0))),
-//                Pair(40.0, listOf(Vector2(-60.0, 80.0), Vector2(60.0, 80.0)))
-//            )
 
             init {
                 Distribution.values().forEach { it.configuration.addTo(gui) }
