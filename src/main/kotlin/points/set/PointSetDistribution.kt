@@ -1,4 +1,4 @@
-package points
+package points.set
 
 import noise.phyllotaxis
 import org.openrndr.extra.gui.GUI

@@ -10,6 +10,7 @@ import org.openrndr.extra.fx.blend.Normal
 import org.openrndr.extra.gui.GUI
 import org.openrndr.extra.gui.addTo
 import org.openrndr.extra.parameters.*
+import points.set.PointSetCollection
 
 
 fun main() = application {

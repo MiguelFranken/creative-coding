@@ -1,4 +1,4 @@
-package points
+package points.set
 
 import org.openrndr.draw.Drawer
 import org.openrndr.extra.gui.GUI

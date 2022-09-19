@@ -1,4 +1,4 @@
-package points
+package points.set
 
 import org.openrndr.color.ColorRGBa
 import org.openrndr.color.rgb
