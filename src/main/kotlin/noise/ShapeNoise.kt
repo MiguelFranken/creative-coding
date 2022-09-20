@@ -49,7 +49,27 @@ fun ShapeProvider.plasticLDS(n: Int): List<Vector2> {
     }
 }
 
-fun vanDerCorput(values: Array<FloatArray>, base: Int, axis: Int, skipZero: Boolean, truncateBits: Int) {
+fun ShapeProvider.haltonLDS(n: Int): List<Vector2> {
+    val corner = shape.bounds.corner
+    val oppositeCorner = shape.bounds.corner + shape.bounds.dimensions
+    val xMin = corner.x
+    val yMin = corner.y
+    val xMax = oppositeCorner.x
+    val yMax = oppositeCorner.y
+
+    val w = xMax - xMin
+    val h = yMax - yMin
+    val values = Array(n) { FloatArray(2) }
+
+    vanDerCorput(values, 2, 0, true, 0)
+    vanDerCorput(values, 3, 1, true, 0)
+
+    return values.map { point ->
+        Vector2(point[0] * w + xMin, point[1] * h + yMin)
+    }
+}
+
+private fun vanDerCorput(values: Array<FloatArray>, base: Int, axis: Int, skipZero: Boolean, truncateBits: Int) {
     // https://blog.demofox.org/2017/05/29/when-random-numbers-are-too-random-low-discrepancy-sequences/
     // https://github.com/Atrix256/SampleZoo/blob/master/src/families/_2d/samples/lds/LDS.cpp
     // figure out how many bits we are working in.
@@ -73,25 +93,5 @@ fun vanDerCorput(values: Array<FloatArray>, base: Int, axis: Int, skipZero: Bool
             q = q / base
             denominator *= base.toFloat()
         }
-    }
-}
-
-fun ShapeProvider.haltonLDS(n: Int): List<Vector2> {
-    val corner = shape.bounds.corner
-    val oppositeCorner = shape.bounds.corner + shape.bounds.dimensions
-    val xMin = corner.x
-    val yMin = corner.y
-    val xMax = oppositeCorner.x
-    val yMax = oppositeCorner.y
-
-    val w = xMax - xMin
-    val h = yMax - yMin
-    val values = Array(n) { FloatArray(2) }
-
-    vanDerCorput(values, 2, 0, true, 0)
-    vanDerCorput(values, 3, 1, true, 0)
-
-    return values.map { point ->
-        Vector2(point[0] * w + xMin, point[1] * h + yMin)
     }
 }
