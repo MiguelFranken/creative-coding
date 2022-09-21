@@ -8,6 +8,20 @@ import org.openrndr.extra.noise.Random
 import org.openrndr.extra.noise.scatter
 import org.openrndr.math.Vector2
 import org.openrndr.shape.LineSegment
+import org.openrndr.shape.ShapeProvider
+
+fun <T> tryUntil(maxTries: Int, execute: () -> T): T? {
+    var toReturn: T? = null
+    for (i in 0 until maxTries) {
+        try {
+            toReturn = execute()
+            break
+        } catch (_: Exception) {
+            continue
+        }
+    }
+    return toReturn
+}
 
 fun main() = application {
     program {
@@ -16,29 +30,13 @@ fun main() = application {
         val offset = 12.0
         val scaledRect = rect.offsetEdges(offset)
 
-        fun generateSegments(): List<LineSegment> {
-            val maxTries = 40
-            var segments: List<LineSegment> = listOf()
+        fun ShapeProvider.generateContourPoints() = shape.bounds.contour.segments.map { it.equidistantPositions(15) }.flatten()
 
-            for (i in 0 until maxTries) {
-                try {
-                    segments = graphMatchedSegments(rect.dimensions) {
-                        val rectSegments = shape.bounds.contour.segments
-
-                        val boundingPoints = rectSegments.map { segment ->
-                            segment.equidistantPositions(15)
-                        }.flatten()
-
-                        scatter(5.0, distanceToEdge = 5.0) + boundingPoints
-                    }
-                    break
-                } catch (_: Exception) {
-                    continue
-                }
+        fun generateSegments(): List<LineSegment> = tryUntil(40) {
+            graphMatchedSegments(rect.dimensions) {
+                generateContourPoints() + scatter(5.0, distanceToEdge = 5.0)
             }
-
-            return segments
-        }
+        } ?: listOf()
 
         val segmentsLeft = generateSegments()
         val segmentsRight = generateSegments()
