@@ -12,6 +12,9 @@ fun main() = application {
     program {
         val rect = drawer.bounds.scaledBy(0.33, 0.5, 0.5, 0.5)
 
+        val offset = 8.0
+        val scaledRect = rect.offsetEdges(offset)
+
         fun generateSegments(): List<LineSegment> {
             val maxTries = 40
             var segments: List<LineSegment> = listOf()
@@ -50,17 +53,29 @@ fun main() = application {
             drawer.isolated {
                 drawer.translate(-rect.width/2.0, -rect.height/2.0)
                 drawer.translate(-drawer.bounds.width/4.0, 0.0)
-                drawer.rectangle(Vector2.ZERO, rect.width, rect.height)
-
+//                drawer.rectangle(Vector2.ZERO, rect.width, rect.height)
                 drawer.lineSegments(segmentsLeft)
+            }
+
+            drawer.isolated {
+                drawer.strokeWeight = 3.0
+                drawer.translate(-scaledRect.width/2.0, -scaledRect.height/2.0)
+                drawer.translate(-drawer.bounds.width/4.0, 0.0)
+                drawer.rectangle(Vector2.ZERO, scaledRect.width, scaledRect.height)
             }
 
             drawer.isolated {
                 drawer.translate(-rect.width/2.0, -rect.height/2.0)
                 drawer.translate(drawer.bounds.width/4.0, 0.0)
-                drawer.rectangle(Vector2.ZERO, rect.width, rect.height)
-
+//                drawer.rectangle(Vector2.ZERO, rect.width, rect.height)
                 drawer.lineSegments(segmentsRight)
+            }
+
+            drawer.isolated {
+                drawer.strokeWeight = 3.0
+                drawer.translate(-scaledRect.width/2.0, -scaledRect.height/2.0)
+                drawer.translate(drawer.bounds.width/4.0, 0.0)
+                drawer.rectangle(Vector2.ZERO, scaledRect.width, scaledRect.height)
             }
         }
     }
