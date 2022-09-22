@@ -1,8 +1,10 @@
 package triangulation
 
 import graphMatchedSegments
+import noise.haltonLDS
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
+import org.openrndr.draw.LineCap
 import org.openrndr.draw.isolated
 import org.openrndr.extra.noise.Random
 import org.openrndr.extra.noise.scatter
@@ -32,14 +34,12 @@ fun main() = application {
 
         fun ShapeProvider.generateContourPoints() = shape.bounds.contour.segments.map { it.equidistantPositions(15) }.flatten()
 
-        fun generateSegments(): List<LineSegment> = tryUntil(40) {
-            graphMatchedSegments(rect.dimensions) {
-                generateContourPoints() + scatter(5.0, distanceToEdge = 5.0)
-            }
+        fun generateSegments(generateInteriorPoints: ShapeProvider.() -> List<Vector2>): List<LineSegment> = tryUntil(100) {
+            graphMatchedSegments(rect.dimensions) { generateContourPoints() + generateInteriorPoints() }
         } ?: listOf()
 
-        val segmentsLeft = generateSegments()
-        val segmentsRight = generateSegments()
+        val segmentsLeft = generateSegments { scatter(5.0, distanceToEdge = 5.0) }
+        val segmentsRight = generateSegments { shape.bounds.offsetEdges(-5.0).haltonLDS(380) }
 
         extend {
             drawer.clear(ColorRGBa.WHITE)
@@ -71,8 +71,8 @@ fun main() = application {
                 drawer.rectangle(Vector2.ZERO, scaledRect.width, scaledRect.height)
             }
 
+            // draw segments right rect
             Random.isolated {
-                // draw segments right rect
                 drawer.isolated {
                     drawer.translate(-rect.width/2.0, -rect.height/2.0)
                     drawer.translate(drawer.bounds.width/4.0, 0.0)
