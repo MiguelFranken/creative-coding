@@ -5,6 +5,8 @@ import org.openrndr.application
 import org.openrndr.color.ColorRGBa
 import org.openrndr.color.rgb
 import org.openrndr.draw.isolated
+import org.openrndr.extensions.Screenshots
+import org.openrndr.extra.gitarchiver.GitArchiver
 import org.openrndr.extra.noise.scatter
 import org.openrndr.extra.triangulation.Delaunay
 import org.openrndr.math.Vector2
@@ -30,6 +32,9 @@ fun main() = application {
         mouse.buttonUp.listen {
             debug = !debug
         }
+
+        extend(GitArchiver())
+        extend(Screenshots())
 
         extend {
             drawer.clear(ColorRGBa.WHITE)
