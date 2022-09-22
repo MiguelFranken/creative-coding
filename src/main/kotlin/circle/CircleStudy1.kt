@@ -2,11 +2,14 @@ package circle
 
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
+import org.openrndr.extensions.Screenshots
 import org.openrndr.extra.noise.Random
 import org.openrndr.shape.Circle
 
 fun main() = application {
     program {
+        extend(Screenshots())
+
         extend {
             drawer.clear(ColorRGBa.WHITE)
             drawer.fill = ColorRGBa.WHITE

@@ -199,6 +199,8 @@ tasks.register<org.openrndr.extra.gitarchiver.GitArchiveToMarkdown>("gitArchiveT
     historySize.set(20)
 }
 
+tasks.register<org.openrndr.extra.gitarchiver.ScreenshotsToMDX>("gitScreenshotsToMDX")
+
 // ------------------------------------------------------------------------------------------------------------------ //
 
 class Openrndr {
