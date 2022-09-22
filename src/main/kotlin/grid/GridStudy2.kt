@@ -3,6 +3,7 @@ package grid
 import org.openrndr.WindowMultisample
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
+import org.openrndr.extensions.Screenshots
 import org.openrndr.extra.noise.Random
 import org.openrndr.extra.olive.oliveProgram
 import org.openrndr.extra.shapes.grid
@@ -34,6 +35,8 @@ fun main() = application {
             Random.randomizeSeed()
             lines = getSegments(grid)
         }
+
+        extend(Screenshots())
 
         extend {
             drawer.clear(ColorRGBa.WHITE)

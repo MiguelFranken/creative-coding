@@ -2,6 +2,7 @@ package circle
 
 import org.openrndr.application
 import org.openrndr.color.rgb
+import org.openrndr.extensions.Screenshots
 import org.openrndr.extra.compositor.compose
 import org.openrndr.extra.compositor.draw
 import org.openrndr.extra.compositor.layer

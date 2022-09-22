@@ -4,6 +4,7 @@ import org.openrndr.WindowMultisample
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.isolated
+import org.openrndr.extensions.Screenshots
 import org.openrndr.extra.noise.Random
 import org.openrndr.extra.shapes.grid
 import org.openrndr.shape.Circle
@@ -42,6 +43,8 @@ fun main() = application {
         mouse.buttonUp.listen {
             Random.randomizeSeed()
         }
+
+        extend(Screenshots())
 
         extend {
             drawer.clear(ColorRGBa.WHITE)
