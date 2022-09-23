@@ -72,8 +72,10 @@ class MDXSaver(var frontmatter: MDXMetadata = MDXMetadata()) : Extension {
 
         program.keyboard.keyDown.listen {
             if (!it.propagationCancelled) {
+                git.commitChanges("auto commit from ${program.name}")
+
                 listenAllOnce(afterMdx, screenshots.afterScreenshot, fun() {
-                    git.commitChanges("auto commit from ${program.name}")
+                    git.commitChanges("saved assets for program ${program.name}")
                 })
 
                 program.requestAssets.trigger(RequestAssetsEvent(this, program))
