@@ -3,9 +3,11 @@ package circle
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
 import org.openrndr.extensions.Screenshots
+import org.openrndr.extra.gitarchiver.Title
 import org.openrndr.extra.noise.Random
 import org.openrndr.shape.Circle
 
+@Title("Some Title")
 fun main() = application {
     program {
         extend(Screenshots())

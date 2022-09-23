@@ -1,12 +1,11 @@
 package triangulation
 
+import MDXSaver
 import graphMatchedSegments
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
 import org.openrndr.color.rgb
 import org.openrndr.draw.isolated
-import org.openrndr.extensions.Screenshots
-import org.openrndr.extra.gitarchiver.GitArchiver
 import org.openrndr.extra.noise.scatter
 import org.openrndr.extra.triangulation.Delaunay
 import org.openrndr.math.Vector2
@@ -33,8 +32,14 @@ fun main() = application {
             debug = !debug
         }
 
-        extend(GitArchiver())
-        extend(Screenshots())
+        extend(MDXSaver()) {
+            title = "Some Triangulation Study 1"
+            description = "Some Description"
+
+            screenshots {
+                contentScale = 4.0
+            }
+        }
 
         extend {
             drawer.clear(ColorRGBa.WHITE)

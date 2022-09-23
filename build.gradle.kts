@@ -3,6 +3,7 @@ import org.gradle.internal.os.OperatingSystem
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+
 group = "org.openrndr.template"
 version = "0.4.0"
 
@@ -29,7 +30,7 @@ val orxFeatures = setOf<String>(
 //  "orx-interval-tree",
 //  "orx-jumpflood",
 //  "orx-kdtree",
-//  "orx-keyframer",      
+//  "orx-keyframer",
 //  "orx-kinect-v1",
 //  "orx-kotlin-parser",
 //  "orx-mesh-generators",
@@ -52,7 +53,7 @@ val orxFeatures = setOf<String>(
     "orx-shapes",
 //  "orx-syphon",
 //  "orx-temporal-blur",
-//  "orx-tensorflow",    
+//  "orx-tensorflow",
 //  "orx-time-operators",
 //  "orx-timer",
   "orx-triangulation",
@@ -198,8 +199,6 @@ runtime {
 tasks.register<org.openrndr.extra.gitarchiver.GitArchiveToMarkdown>("gitArchiveToMarkDown") {
     historySize.set(20)
 }
-
-tasks.register<org.openrndr.extra.gitarchiver.ScreenshotsToMDX>("gitScreenshotsToMDX")
 
 // ------------------------------------------------------------------------------------------------------------------ //
 
