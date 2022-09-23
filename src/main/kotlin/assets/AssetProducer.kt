@@ -1,7 +1,6 @@
 import mu.KotlinLogging
 import org.openrndr.*
 import org.openrndr.events.Event
-import org.openrndr.extensions.ScreenshotEvent
 import org.openrndr.extensions.Screenshots
 import org.openrndr.extra.gitarchiver.GitArchiver
 import org.openrndr.extra.gitarchiver.GitProvider
@@ -26,7 +25,7 @@ class MDXSaver(var title: String = "", var description: String = "") : Extension
             commitOnRequestAssets = false
         }
 
-        screenshots.folder = assetsFolder
+        screenshots.folder = "$assetsFolder/images"
         program.extend(screenshots) {
             async = false
             listenToKeyDownEvent = false
@@ -45,16 +44,24 @@ class MDXSaver(var title: String = "", var description: String = "") : Extension
             AssetMetadata(oldMetadata.programName, oldMetadata.assetBaseName, program.assetProperties)
         }
 
-        program.produceAssets.listen {
+        program.produceAssets.listen { event ->
             val valueText = buildString {
                 appendLine("---")
-                it.assetMetadata.assetProperties.map { appendLine("${it.key}: '${it.value}'") }.joinToString("\n")
+                event.assetMetadata.assetProperties.map { appendLine("${it.key}: '${it.value}'") }.joinToString("\n")
                 appendLine("---")
             }
 
-            val output = "${assetsFolder}/${it.assetMetadata.assetBaseName}.mdx"
-            logger.info { "mdx saved to: $output" }
-            File(output).writeText(valueText)
+            val output = "${event.assetMetadata.assetBaseName}.mdx"
+            val parent = "$assetsFolder/mdx"
+            val f = File(parent, output)
+            logger.info { "mdx saved to: ${f.path}" }
+
+            if (!f.parentFile.exists())
+                f.parentFile.mkdirs()
+            if (!f.exists())
+                f.createNewFile()
+
+            f.writeText(valueText)
 
             afterMdx.trigger(Unit)
         }
