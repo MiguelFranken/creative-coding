@@ -48,6 +48,8 @@ class MDXSaver(var frontmatter: MDXMetadata = MDXMetadata()) : Extension {
             program.assetProperties["title"] = frontmatter.title
             program.assetProperties["description"] = frontmatter.description
             program.assetProperties["image"] = "$qualifier.png"
+            program.assetProperties["hash"] = program.assetProperties["git-commit-hash"]!!
+            program.assetProperties.remove("git-commit-hash")
             AssetMetadata(oldMetadata.programName, qualifier, program.assetProperties)
         }
 
