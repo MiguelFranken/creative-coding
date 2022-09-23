@@ -47,6 +47,7 @@ class MDXSaver(var frontmatter: MDXMetadata = MDXMetadata()) : Extension {
             program.assetProperties["qualifier"] = qualifier
             program.assetProperties["title"] = frontmatter.title
             program.assetProperties["description"] = frontmatter.description
+            program.assetProperties["image"] = "$qualifier.png"
             AssetMetadata(oldMetadata.programName, qualifier, program.assetProperties)
         }
 
