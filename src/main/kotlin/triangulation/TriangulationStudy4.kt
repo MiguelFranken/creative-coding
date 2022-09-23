@@ -33,8 +33,9 @@ fun main() = application {
         }
 
         extend(MDXSaver()) {
-            title = "Some Triangulation Study 1"
-            description = "Some Description"
+            metadata {
+                title = "Some Triangulation Study 1"
+            }
 
             screenshots {
                 contentScale = 4.0

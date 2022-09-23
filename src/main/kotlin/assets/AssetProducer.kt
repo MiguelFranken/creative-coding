@@ -6,7 +6,9 @@ import org.openrndr.extra.gitarchiver.GitArchiver
 import org.openrndr.extra.gitarchiver.GitProvider
 import java.io.File
 
-class MDXSaver(var title: String = "", var description: String = "") : Extension {
+data class MDXMetadata(var title: String = "SomeTitle", var description: String = "SomeDescription")
+
+class MDXSaver(var frontmatter: MDXMetadata = MDXMetadata()) : Extension {
     override var enabled: Boolean = true
 
     private val assetsFolder = "assets"
@@ -17,6 +19,8 @@ class MDXSaver(var title: String = "", var description: String = "") : Extension
     private val afterMdx = Event<Unit>("after-mdx")
 
     private val git: GitProvider = GitProvider.create()
+
+    fun metadata(configure: MDXMetadata.() -> Unit) = frontmatter.configure()
 
     fun screenshots(configure: Screenshots.() -> Unit) = screenshots.configure()
 
@@ -38,8 +42,8 @@ class MDXSaver(var title: String = "", var description: String = "") : Extension
         val oldMetadataFunction = program.assetMetadata
 
         program.assetMetadata = {
-            program.assetProperties["title"] = title
-            program.assetProperties["description"] = description
+            program.assetProperties["title"] = frontmatter.title
+            program.assetProperties["description"] = frontmatter.description
             val oldMetadata = oldMetadataFunction()
             AssetMetadata(oldMetadata.programName, oldMetadata.assetBaseName, program.assetProperties)
         }
