@@ -34,7 +34,8 @@ fun main() = application {
 
         extend(MDXSaver()) {
             metadata {
-                title = "Some Triangulation Study 1"
+                title = "Segment Set Study 1"
+                description = "This study explores how to generate non-intersecting line segments via a perfect matching graph algorithm applied to a random triangulated irregular network (TIN)."
             }
 
             screenshots {
