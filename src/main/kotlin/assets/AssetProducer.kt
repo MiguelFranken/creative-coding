@@ -42,10 +42,12 @@ class MDXSaver(var frontmatter: MDXMetadata = MDXMetadata()) : Extension {
         val oldMetadataFunction = program.assetMetadata
 
         program.assetMetadata = {
+            val oldMetadata = oldMetadataFunction()
+            val qualifier = oldMetadata.assetBaseName.split("-").first()
+            program.assetProperties["qualifier"] = qualifier
             program.assetProperties["title"] = frontmatter.title
             program.assetProperties["description"] = frontmatter.description
-            val oldMetadata = oldMetadataFunction()
-            AssetMetadata(oldMetadata.programName, oldMetadata.assetBaseName.split("-").first(), program.assetProperties)
+            AssetMetadata(oldMetadata.programName, qualifier, program.assetProperties)
         }
 
         program.produceAssets.listen { event ->
